@@ -1,0 +1,28 @@
+clinic-appointment-system/
+├── public/
+│   ├── css/
+│   │   ├── styles.css
+│   └── js/
+│       ├── scripts.js
+├── views/
+│   ├── index.html
+│   ├── home.html
+│   ├── book-appointment.html
+│   ├── my-appointments.html
+│   └── login.html
+├── models/
+│   ├── User.js
+│   ├── Appointment.js
+├── routes/
+│   ├── auth.js
+│   ├── user.js
+│   ├── appointment.js
+├── config/
+│   ├── db.js
+│   ├── mailer.js
+│   └── jwt.js
+├── middleware/
+│   ├── auth.js
+├── app.js
+├── package.json
+└── README.md

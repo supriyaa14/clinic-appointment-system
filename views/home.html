@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="home-container">
+        <h2>Welcome to the Clinic Appointment System</h2>
+        <p id="myBookings"></p>
+        <p id="nextBookingDate"></p>
+        <button onclick="toggleMenu()">Menu</button>
+        <div class="menu">
+            <button onclick="window.location.href='/book-appointment.html'">Book Appointment</button>
+            <button onclick="window.location.href='/my-appointments.html'">My Appointments</button>
+            <button id="logoutBtn">Logout</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/index.html';
+                return;
+            }
+
+            const response = await fetch('/api/home-data', {
+                headers: {
+                    'Authorization': token
+                }
+            });
+
+            if (response.status === 401) {
+                window.location.href = '/index.html';
+                return;
+            }
+
+            const data = await response.json();
+            document.getElementById('myBookings').textContent = `Total Bookings: ${data.totalBookings}`;
+            document.getElementById('nextBookingDate').textContent = `Next Booking Date: ${data.nextBookingDate}`;
+
+            document.getElementById('logoutBtn').addEventListener('click', async function() {
+                await fetch('/api/logout');
+                localStorage.removeItem('token');
+                window.location.href = '/index.html';
+            });
+        });
+
+        function toggleMenu() {
+            const menu = document.querySelector('.menu');
+            menu.style.display = menu.style.display === 'none' || menu.style.display === '' ? 'flex' : 'none';
+        }
+    </script>
+</body>
+</html>

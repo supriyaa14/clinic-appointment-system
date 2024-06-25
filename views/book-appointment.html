@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Appointment</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="appointment-container">
+        <h2>Book Appointment</h2>
+        <form id="bookAppointmentForm">
+            <input type="text" name="firstName" placeholder="First Name" required readonly>
+            <input type="text" name="lastName" placeholder="Last Name" required readonly>
+            <input type="text" name="gender" placeholder="Gender" required readonly>
+            <input type="date" name="dob" placeholder="Date of Birth" required readonly>
+            <input type="text" name="age" placeholder="Age" required readonly>
+            <input type="date" name="appointmentDate" placeholder="Appointment Date" required>
+            <input type="time" name="time" placeholder="Time" required>
+            <select name="doctor" required>
+                <option value="">Select Doctor</option>
+                <option value="Doctor 1">Doctor 1</option>
+                <option value="Doctor 2">Doctor 2</option>
+            </select>
+            <input type="text" name="purpose" placeholder="Purpose of Visit" required>
+            <button type="submit">Book Appointment</button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/index.html';
+                return;
+            }
+
+            const response = await fetch('/api/user-data', {
+                headers: {
+                    'Authorization': token
+                }
+            });
+
+            if (response.status === 401) {
+                window.location.href = '/index.html';
+                return;
+            }
+
+            const data = await response.json();
+            document.querySelector('input[name="firstName"]').value = data.firstName;
+            document.querySelector('input[name="lastName"]').value = data.lastName;
+            document.querySelector('input[name="gender"]').value = data.gender;
+            document.querySelector('input[name="dob"]').value = data.dob;
+            document.querySelector('input[name="age"]').value = data.age;
+
+            document.getElementById('bookAppointmentForm').addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const formData = new FormData(event.target);
+                const data = {};
+                formData.forEach((value, key) => data[key] = value);
+
+                const response = await fetch('/api/book-appointment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert('Appointment booked successfully.');
+                    window.location.href = '/home.html';
+                } else {
+                    alert('Booking failed. Please try again.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
